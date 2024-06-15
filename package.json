@@ -1,0 +1,20 @@
+{
+	"name": "devsr-py",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"start": "tsx --no-warnings src/script.ts"
+	},
+	"keywords": [],
+	"author": "Soikat Rahman",
+	"license": "ISC",
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"tsx": "^4.7.0"
+	},
+	"dependencies": {
+		"@clack/prompts": "^0.7.0",
+		"fs-extra": "^11.2.0",
+		"picocolors": "^1.0.0"
+	}
+}

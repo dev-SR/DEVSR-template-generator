@@ -1,0 +1,4 @@
+@echo off
+tsx "~\project\src\script.ts" %*
+REM  `%*`: Passes any arguments given to the batch file to the Python scrip
+@REM pause
