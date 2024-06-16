@@ -5,6 +5,7 @@ import color from 'picocolors';
 import { copy_dir } from './io/file_op';
 import { execCommand } from './io/subprocess';
 import { fileURLToPath } from 'url';
+import { generate_files } from './file_gen/generate_file';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SOURCE_DIR = __dirname;
@@ -22,13 +23,21 @@ async function run() {
 			p.select({
 				message: `Pick which type of project you want to create`,
 				initialValue: typesOfTemplates[0],
-				options: typesOfTemplates.map((type) => ({
-					value: type,
-					label: type
-				}))
+				options: [
+					{
+						value: 'GenerateFile',
+						label: 'Generate File'
+					},
+					...typesOfTemplates.map((type) => ({
+						value: type,
+						label: type
+					}))
+				]
 			}),
 		template_selected: ({ results }) => {
 			const selectedTemplatePath = path.join(templatesPath, results.project_type_selected);
+			if (results.project_type_selected == 'GenerateFile') return;
+
 			const templatesOptions = fs.readdirSync(selectedTemplatePath);
 			if (templatesOptions.length === 0) {
 				p.cancel('No templates found');
@@ -43,13 +52,19 @@ async function run() {
 				}))
 			});
 		},
-		project_name: () =>
-			p.text({
+		project_name: ({ results }) => {
+			if (results.project_type_selected == 'GenerateFile') return;
+			return p.text({
 				message: 'What is the name of your project?',
 				defaultValue: '.',
 				placeholder: './(current)'
-			})
+			});
+		}
 	});
+
+	if (project.project_type_selected == 'GenerateFile') {
+		generate_files(CURRENT_EXEC_DIR);
+	}
 
 	if (project.project_type_selected == 'Web') {
 		const js_dir_ignore = ['node_modules', '.next'];
@@ -61,7 +76,11 @@ async function run() {
 			project.project_type_selected,
 			project.template_selected as string
 		);
-		const to_be_copied_to = path.join(CURRENT_EXEC_DIR, project.project_name);
+		if (!project.project_name) {
+			p.cancel('Project name is required');
+			process.exit(0);
+		}
+		const to_be_copied_to = path.join(CURRENT_EXEC_DIR, project.project_name as string);
 		// empty existing dir
 		fs.emptyDirSync(to_be_copied_to);
 		const s = p.spinner();
