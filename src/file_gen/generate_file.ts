@@ -72,6 +72,10 @@ const handleDjango = async (CURRENT_EXEC_DIR: string) => {
 				{
 					value: 'serializers.py',
 					label: 'serializers.py'
+				},
+				{
+					value: 'signals.py',
+					label: 'signals.py'
 				}
 			]
 		});

@@ -103,6 +103,20 @@ async function run() {
 			await execCommand('prisma db seed');
 			await execCommand('pnpm dev');
 		}
+
+		if (['nextjs-trpc-auth'].includes(project.template_selected as string)) {
+			// cd into project and install packages using subprocess
+			process.chdir(to_be_copied_to);
+			p.note(
+				`Performing ${color.bgCyan(color.black(' pnpm install '))} in ${color.bgCyan(
+					color.black(to_be_copied_to)
+				)}`
+			);
+			await execCommand('pnpm install');
+			await execCommand('prisma db push');
+			await execCommand('prisma db seed');
+			await execCommand('pnpm dev');
+		}
 		if (
 			['django-tailwind-htmx', 'django-tailwind-htmx-rest-api'].includes(
 				project.template_selected as string
