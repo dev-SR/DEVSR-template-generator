@@ -2,6 +2,7 @@ import path from 'path';
 import * as p from '@clack/prompts';
 import fs from 'fs-extra';
 import color from 'picocolors';
+import { fileURLToPath } from 'url';
 
 const ProjectType = [
 	{
@@ -30,6 +31,43 @@ export const generate_files = async (CURRENT_EXEC_DIR: string) => {
 	// if django
 	if (project_type_selected == 'django') {
 		handleDjango(CURRENT_EXEC_DIR);
+	}
+	if (project_type_selected == 'nextjs') {
+		handleNextjs(CURRENT_EXEC_DIR);
+	}
+};
+
+const handleNextjs = async (CURRENT_EXEC_DIR: string) => {
+	const __dirname = path.dirname(fileURLToPath(import.meta.url));
+	const file_gen_dir = __dirname;
+	const nextjs_files = path.join(file_gen_dir, 'files', 'nextjs');
+	const instance_names = fs.readdirSync(nextjs_files);
+	const selected_instance = await p.multiselect({
+		message: 'Select apps to generate files',
+		options: instance_names.map((app) => ({
+			value: app,
+			label: app
+		}))
+	});
+
+	for (const instance of selected_instance as string[]) {
+		if (instance == 'drizzle') {
+			const drizzle_path = path.join(nextjs_files, instance);
+			fs.copySync(drizzle_path, CURRENT_EXEC_DIR, {
+				overwrite: false
+			});
+			p.outro(`Drizzle Files generated successfully
+Now install:
+${color.italic(color.yellow('pnpm add drizzle-orm postgres @next/env'))}
+${color.italic(color.yellow('pnpm add -D drizzle-kit @faker-js/faker'))}
+And add the following \`package.json\` scripts:
+${color.green(`"pg:push": "drizzle-kit push",
+"pg:drop": "drizzle-kit drop",
+"pg:studio": "drizzle-kit studio",
+"pg:generate-migration": "drizzle-kit generate",
+"pg:migrate": "drizzle-kit migrate",
+"pg:seed": "npx tsx db/seed.ts"`)}`);
+		}
 	}
 };
 
