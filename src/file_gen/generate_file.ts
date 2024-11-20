@@ -66,7 +66,14 @@ ${color.green(`"pg:push": "drizzle-kit push",
 "pg:studio": "drizzle-kit studio",
 "pg:generate-migration": "drizzle-kit generate",
 "pg:migrate": "drizzle-kit migrate",
-"pg:seed": "npx tsx db/seed.ts"`)}`);
+"pg:seed": "npx tsx db/seed.ts"`)}
+Add .env:
+${color.yellow(`POSTGRES_USER=myuser
+POSTGRES_PASSWORD=mypass
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=test_db
+DATABASE_URL=postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@\${POSTGRES_HOST}:\${POSTGRES_PORT}/\${POSTGRES_DB}`)}`);
 		}
 	}
 };
